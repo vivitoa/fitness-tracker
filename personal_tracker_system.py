@@ -7,85 +7,54 @@ calories = []  # To store calorie intake for meals
 # Variables for daily goals
 workout_goal = 0  # Daily workout goal in minutes
 calorie_goal = 0  # Daily calorie intake goal
-total_workout_time = 0  # Total workout time for the day in hours
-total_calories = 0  # Total calories consumed for the day
 
 
-def log_workout():
-    """
-    Log a workout.
-    - Append the workout type and duration to the workouts list.
-    - Print a confirmation message.
-    """
-    workout_type = input('Workout type: ')
-    duration = float(input('Duration in minutes: '))
+def log_workout(workout_type, duration):
     workouts.append((workout_type, duration))
-    print(f"Logged {workout_type} for {duration} minutes.")
+    return f"Logged {workout_type} for {duration:.2f} minutes."
 
 
-def log_calorie_intake():
-    """
-    Log calorie intake for a meal.
-    - Append the calorie amount to the calories list.
-    - Print a confirmation message.
-    """
-    calories_consumed = float(input('Calories_consumed'))
+def log_calorie_intake(calories_consumed):
     calories.append(calories_consumed)
-    print(f"Logged {calories_consumed} calories consumed.")
+    return f"Logged {calories_consumed:.2f} calories consumed."
 
 
 def view_progress():
-    """
-    Display a summary of the user's progress for the day.
-    - Calculate the total workout time and total calories.
-    - Print motivational feedback.
-    """
-    global total_workout_time, total_calories
-    total_workout_time = sum(duration for _, duration in workouts)
-    total_calories = sum(calories)
-    print(f'Great job! Total workout time is {total_workout_time} minutes.'
-          f'\nTotal calorie intake is {total_calories}. Keep going!')
+    return (f"Great job! Total workout time is {sum(duration for _, duration in workouts):.2f} "
+            f"minutes.\nTotal calorie intake is {sum(calories):.2f}. Keep going!")
 
 
 def reset_progress():
-    """
-    Clear all data from the workouts and calories lists.
-    - Print a confirmation message.
-    """
-    global  total_workout_time, total_calories
     workouts.clear()
     calories.clear()
-    total_workout_time = 0
-    total_calories = 0
-    print("Progress has been reset.")
+    return "Progress has been reset."
 
 
-def set_daily_goals():
-    """
-    Set daily goals for workout time and calorie intake.
-    - Update the global variables workout_goal and calorie_goal.
-    - Print a confirmation message.
-    """
+def set_daily_goals(workout_minutes, calorie_limit):
     global workout_goal, calorie_goal
-    workout_goal = float(input('Workout duration goal in minutes: '))
-    calorie_goal = float(input('Calorie intake goal: '))
+    workout_goal = workout_minutes
+    calorie_goal = calorie_limit
+    return "Daily goals have been updated."
 
 
 def encouragement_system():
-    """
-    Provide motivational feedback based on progress and goals.
-    - Compare current totals to the daily goals.
-    - Print encouragement messages.
-    """
-    if total_workout_time >= workout_goal:
-        print("Congratulations! You've met or exceeded your daily workout goal!")
-    else:
-        print(f"You can do it! You need {workout_goal - total_workout_time} more minutes to reach your workout goal.")
+    total_workout = sum(duration for _, duration in workouts)
+    total_calories = sum(calories)
 
-    if total_calories <= calorie_goal:
-        print(f"You're on track! You've consumed {total_calories} calories out of your goal of {calorie_goal}.")
-    else:
-        print(f"Pay attention! You've exceeded your calorie goal by {total_calories - calorie_goal} calories.")
+    workout_message = (
+        "Congratulations! You've met or exceeded your daily workout goal!"
+        if total_workout >= workout_goal
+        else f"You can do it! You need {workout_goal - total_workout:.2f} more minutes to reach your workout goal."
+    )
+
+    calorie_message = (
+        f"You're on track! You've consumed {total_calories:.2f} calories out of your goal of {calorie_goal:.2f}."
+        if total_calories <= calorie_goal
+        else f"Pay attention! You've exceeded your calorie goal by {total_calories - calorie_goal:.2f} calories."
+    )
+
+    return f"{workout_message}\n{calorie_message}"
+
 
 def main():
     """
@@ -100,31 +69,39 @@ def main():
         print("3. View Progress")
         print("4. Reset Progress")
         print("5. Set Daily Goals")
-        print("6. Exit")
+        print("6. Feedback")
+        print("7. Exit")
 
         # Prompt user for their choice
         choice = input("\nEnter your choice: ")
 
         if choice == '1':
-            # Prompt for workout type and duration
-            log_workout()
+            input_workout = input('Workout type: ')
+            input_duration = float(input('Duration in minutes: '))
+            print(log_workout(input_workout, input_duration))
+
         elif choice == '2':
-            # Prompt for calories consumed
-            log_calorie_intake()
+            input_calories = float(input('Calories consumed: '))
+            print(log_calorie_intake(input_calories))
+
         elif choice == '3':
-            # Call view_progress function
-            view_progress()
-            encouragement_system()
+            print(view_progress())
+
         elif choice == '4':
-            # Call reset_progress function
-            reset_progress()
+            print(reset_progress())
+
         elif choice == '5':
-            # Prompt for daily goals
-            set_daily_goals()
+            workout_ = float(input('Workout duration goal in minutes: '))
+            calorie_ = float(input('Calorie intake goal: '))
+            print(set_daily_goals(workout_, calorie_))
+
         elif choice == '6':
-            # Print a goodbye message and break the loop
+            print(encouragement_system())
+
+        elif choice == '7':
             print("Thank you for using the Fitness Tracker. Stay healthy! 💪")
             break
+
         else:
             print("Invalid choice, please try again.")
 
